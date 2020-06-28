@@ -356,13 +356,13 @@ namespace WeatherForecast
         {
             List<WeatherClass>[] fullWeather = new List<WeatherClass>[2];
 
-            fullWeather[0] = ConvertHourlyToMidWeather(GetWeatherHourly());
-            fullWeather[1] = ConvertDailyToMidWeather(GetWeatherDaily());
+            fullWeather[0] = ConvertHourlyToWeatherClass(GetWeatherHourly());
+            fullWeather[1] = ConvertDailyToWeatherClass(GetWeatherDaily());
 
             return fullWeather;
         }
 
-        private List<WeatherClass> ConvertHourlyToMidWeather(IList<Hourly> list)
+        private List<WeatherClass> ConvertHourlyToWeatherClass(IList<Hourly> list)
         {
             hourlyForecast = new List<WeatherClass>();
             foreach (var hour in list)
@@ -387,7 +387,7 @@ namespace WeatherForecast
             return hourlyForecast;
         }
 
-        private List<WeatherClass> ConvertDailyToMidWeather(IList<DailyForecast> list)
+        private List<WeatherClass> ConvertDailyToWeatherClass(IList<DailyForecast> list)
         {
 
             dailyForecast = new List<WeatherClass>();

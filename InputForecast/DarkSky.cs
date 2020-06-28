@@ -22,7 +22,11 @@ namespace WeatherForecast
         List<WeatherClass> threeHourly;
         List<WeatherClass> daily;
 
-
+        static DateTime ConvertFromUnixToDateTime(double unixTime)
+        {
+            DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            return dateTime.AddSeconds(unixTime);
+        }
 
         #region JSON Classes
         public class Currently
@@ -152,11 +156,7 @@ namespace WeatherForecast
         {
             this.token = token;
         }
-        static DateTime ConvertFromUnixToDateTime(double unixTime)
-        {
-            DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            return dateTime.AddSeconds(unixTime);
-        }
+       
         private Example GetWeather() //https://darksky.net/dev/account
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -170,9 +170,9 @@ namespace WeatherForecast
                     {
                         string input = reader.ReadToEnd();
 
-                        Example rootObject = JsonConvert.DeserializeObject<Example>(input);
+                        Example example = JsonConvert.DeserializeObject<Example>(input);
 
-                        return rootObject;
+                        return example;
                     }
                 }
             }

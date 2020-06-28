@@ -107,11 +107,11 @@ namespace WeatherForecast
             OpenWeatherMapClient client = new OpenWeatherMapClient(token);
             var currentWeather = await client.Forecast.GetByCityId(686875, false, MetricSystem.Metric, OpenWeatherMapLanguage.RU);
 
-            return ConvertToMidWeather(currentWeather.Forecast);
+            return ConvertToWeatherClass(currentWeather.Forecast);
 
         }
 
-        private List<WeatherClass> ConvertToMidWeather(ForecastTime[] forecast)
+        private List<WeatherClass> ConvertToWeatherClass(ForecastTime[] forecast)
         {
             List<WeatherClass> ThreeHourly = new List<WeatherClass>();
 

@@ -188,11 +188,11 @@ namespace WeatherForecast
 
         public List<WeatherClass> GetDaily()
         {
-            daily = ConvertToMidWeather(GetWeather());
+            daily = ConvertToWeatherClass(GetWeather());
 
             return daily;
         }
-        private  List<WeatherClass> ConvertToMidWeather(RootObject rootObject)
+        private  List<WeatherClass> ConvertToWeatherClass(RootObject rootObject)
         {
             daily = new List<WeatherClass>();
 

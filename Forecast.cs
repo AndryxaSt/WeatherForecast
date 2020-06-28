@@ -17,10 +17,8 @@ namespace WeatherForecast
         AccuWeather accuWeather; //12hourly, 5daily
         DateTime timeNow;
 
-        List<WeatherClass> weatherBits;
-        List<WeatherClass>[] darkSkys;
-        List<WeatherClass> openWeathers;
-        List<WeatherClass>[] accuWeathers;
+        List<WeatherClass> weatherBits, openWeathers;
+        List<WeatherClass>[] darkSkys, accuWeathers;
 
         Dictionary<string, string> tokens;
         public Forecast()
@@ -240,7 +238,6 @@ namespace WeatherForecast
         }
         private Dictionary<string, string> GetTokens()
         {
-
             string[] tokenFile = File.ReadAllLines(@"Tokens.txt");
             var tokens = new Dictionary<string, string>();
             string[] temp;
