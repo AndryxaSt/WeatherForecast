@@ -18,7 +18,7 @@ namespace WeatherForecast
         DateTime timeNow;
 
         List<WeatherClass> weatherBits;
-        List<List<WeatherClass>> darkSkys;
+        List<WeatherClass>[] darkSkys;
         List<WeatherClass> openWeathers;
         List<WeatherClass>[] accuWeathers;
 
@@ -33,7 +33,7 @@ namespace WeatherForecast
         }
 
 
-        public void GetWeather()
+        private void GetWeather()
 
         {
             timeNow = DateTime.Now;
@@ -241,7 +241,7 @@ namespace WeatherForecast
         private Dictionary<string, string> GetTokens()
         {
 
-            string[] tokenFile = File.ReadAllLines(@"G:\Андрей\Програмирование\Projects\MyPetProjects\wf\WeatherForecast\Tokens.txt");
+            string[] tokenFile = File.ReadAllLines(@"Tokens.txt");
             var tokens = new Dictionary<string, string>();
             string[] temp;
             for (int i = 0; i < tokenFile.Length; i++)

@@ -178,7 +178,7 @@ namespace WeatherForecast
             }
         }
 
-        public List<List<WeatherClass>> GetFullWeather()
+        public List<WeatherClass>[] GetFullWeather()
         {
             if (weather == null || ConvertFromUnixToDateTime(weather.hourly.data[0].time).Day < DateTime.Now.Day)
             { weather = GetWeather(); }
@@ -186,7 +186,7 @@ namespace WeatherForecast
             hourly = GetHourly(weather);
             threeHourly = GetThreeHourly(weather);
             daily = GetDaily(weather);
-            return new List<List<WeatherClass>> { hourly, threeHourly, daily };
+            return new List<WeatherClass>[3] {hourly, threeHourly, daily };
         }
 
         private List<WeatherClass> GetHourly(Example weather)
