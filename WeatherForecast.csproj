@@ -53,7 +53,6 @@
     <Compile Include="InputForecast\AccuWeather.cs" />
     <Compile Include="InputForecast\DarkSky.cs" />
     <Compile Include="Forecast.cs" />
-    <Compile Include="InputForecast\UnionWeatherIcon.cs" />
     <Compile Include="InputForecast\WeatherClass.cs" />
     <Compile Include="InputForecast\OpenWeather.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

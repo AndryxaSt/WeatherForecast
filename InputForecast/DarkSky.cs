@@ -203,7 +203,7 @@ namespace WeatherForecast
                     TempMin = item.temperature,
                     WindDirection = item.windBearing,
                     WindSpeed = item.windSpeed,
-                    WeatherCode = 0,
+                    WeatherCode = ChangeCode(item.icon),
                     PrecipProbability = item.precipProbability * 100,
                     Clouds = item.icon,
                     CloudsValue = item.cloudCover * 100,
@@ -229,7 +229,7 @@ namespace WeatherForecast
                         TempMin = item.temperature,
                         WindDirection = item.windBearing,
                         WindSpeed = item.windSpeed,
-                        WeatherCode = 0,
+                        WeatherCode = ChangeCode(item.icon),
                         PrecipProbability = item.precipProbability * 100,
                         Clouds = item.icon,
                         CloudsValue = item.cloudCover * 100,
@@ -255,7 +255,7 @@ namespace WeatherForecast
                     TempMin = item.temperatureMin,
                     WindDirection = item.windBearing,
                     WindSpeed = item.windSpeed,
-                    WeatherCode = 0,
+                    WeatherCode =ChangeCode(item.icon),
                     PrecipProbability = item.precipProbability * 100,
                     Clouds = item.icon,
                     CloudsValue = item.cloudCover * 100,
@@ -265,6 +265,36 @@ namespace WeatherForecast
             }
 
             return daily;
+        }
+        int ChangeCode(string inputCode)
+        {
+            switch (inputCode)
+            {
+                case "rain":
+                    return 502;
+                case "snow":
+                    return 601;
+                case "sleet":
+                    return 611;
+                case "wind ":
+                    return 700;
+                case "fog":
+                    return 741;
+                case "clear-day":
+                    return 800;
+                case "clear-night":
+                    return 800;
+                case "partly-cloudy-day":
+                    return 802;
+                case "partly-cloudy-night":
+                    return 802;
+                case "cloudy":
+                    return 804;
+
+                default:
+                    return 1;
+            }
+
         }
 
     }
