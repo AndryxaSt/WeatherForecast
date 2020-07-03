@@ -9,18 +9,15 @@ using Newtonsoft.Json;
 
 namespace WeatherForecast
 {
-    class AccuWeather
+    class AccuWeather : InputForecast.AbdtractInputWeather
 
     {   //5day forecast http://dataservice.accuweather.com/forecasts/v1/daily/5day/325693?apikey="+token+"&language=ru-ru&metric=true
         //12hourly forecast http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/325693?apikey="+token+"&language=ru-ru&metric=true
-        string token { get; set; }
 
-        List<WeatherClass> hourlyForecast;
-        List<WeatherClass> dailyForecast;
 
-        public AccuWeather(string token)
+        public AccuWeather(string token, string location) : base (token, location)
         {
-            this.token = token;
+
         }
 
         #region JsonClasses
@@ -314,7 +311,7 @@ namespace WeatherForecast
         #endregion
         private IList<Hourly> GetWeatherHourly()
         {
-            WebRequest requestBit = WebRequest.Create(@"http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/325693?apikey=" + token + "&language=ru-ru&details=true&metric=true");//details
+            WebRequest requestBit = WebRequest.Create(@"http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/" + location + "?apikey=" + token + "&language=ru-ru&details=true&metric=true");//details
             using (WebResponse response = requestBit.GetResponse())
             {
                 using (Stream stream = response.GetResponseStream())
@@ -333,7 +330,7 @@ namespace WeatherForecast
 
         private IList<DailyForecast> GetWeatherDaily()
         {
-            WebRequest requestBit = WebRequest.Create(@"http://dataservice.accuweather.com/forecasts/v1/daily/5day/325693?apikey=" + token + "&language=ru-ru&details=true&metric=true");
+            WebRequest requestBit = WebRequest.Create(@"http://dataservice.accuweather.com/forecasts/v1/daily/5day/" + location + "?apikey=" + token + "&language=ru-ru&details=true&metric=true");
             using (WebResponse response = requestBit.GetResponse())
             {
                 using (Stream stream = response.GetResponseStream())
@@ -352,9 +349,9 @@ namespace WeatherForecast
 
         }
 
-        public List<WeatherClass>[] GetFullWeather()
+        public IList<WeatherClass>[] GetFullWeather()
         {
-            List<WeatherClass>[] fullWeather = new List<WeatherClass>[2];
+            IList<WeatherClass>[] fullWeather = new List<WeatherClass>[2];
 
             fullWeather[0] = ConvertHourlyToWeatherClass(GetWeatherHourly());
             fullWeather[1] = ConvertDailyToWeatherClass(GetWeatherDaily());
@@ -362,12 +359,12 @@ namespace WeatherForecast
             return fullWeather;
         }
 
-        private List<WeatherClass> ConvertHourlyToWeatherClass(IList<Hourly> list)
+        private IList<WeatherClass> ConvertHourlyToWeatherClass(IList<Hourly> list)
         {
-            hourlyForecast = new List<WeatherClass>();
+            hourly = new List<WeatherClass>();
             foreach (var hour in list)
             {
-                hourlyForecast.Add(new WeatherClass
+                hourly.Add(new WeatherClass
                 {
                     Date = hour.DateTime,
                     TempMax = hour.Temperature.Value,
@@ -384,16 +381,16 @@ namespace WeatherForecast
 
             }
 
-            return hourlyForecast;
+            return hourly;
         }
 
-        private List<WeatherClass> ConvertDailyToWeatherClass(IList<DailyForecast> list)
+        private IList<WeatherClass> ConvertDailyToWeatherClass(IList<DailyForecast> list)
         {
 
-            dailyForecast = new List<WeatherClass>();
+            daily = new List<WeatherClass>();
             foreach (var day in list)
             {
-                dailyForecast.Add(new WeatherClass
+                daily.Add(new WeatherClass
                 {
                     Date = day.Date,
                     TempMax = day.RealFeelTemperatureShade.Maximum.Value,
@@ -410,7 +407,7 @@ namespace WeatherForecast
 
             }
 
-            return dailyForecast;
+            return daily;
 
 
 
@@ -504,6 +501,6 @@ namespace WeatherForecast
                 default:
                     return 1;
             }
-        }
+        }// This method changes the weather code to a common code.
     }
 }

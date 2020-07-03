@@ -9,14 +9,12 @@ using System.Threading.Tasks;
 
 namespace WeatherForecast
 {
-     class WeatherBit//https://www.weatherbit.io
+     class WeatherBit: InputForecast.AbdtractInputWeather//https://www.weatherbit.io
     {
-        List<WeatherClass> daily;
-        readonly string token;
-
-        public WeatherBit(string token)
+        
+        public WeatherBit(string token, string location) : base(token, location)
         {
-            this.token = token;
+
         }
         #region JSON Classes
         class Weather
@@ -169,7 +167,7 @@ namespace WeatherForecast
         private RootObject GetWeather()
         {
             WebRequest requestBit = WebRequest.Create(@"https://api.weatherbit.io/v2.0/forecast/daily?city=Konotop&country=ua&days=6&units=M&lang=ru&key="+token);
-
+            /           /
             using (WebResponse response = requestBit.GetResponse())
             {
                 using (Stream stream = response.GetResponseStream())
@@ -186,13 +184,13 @@ namespace WeatherForecast
             }
         }
 
-        public List<WeatherClass> GetDaily()
+        public IList<WeatherClass> GetDaily()
         {
             daily = ConvertToWeatherClass(GetWeather());
 
             return daily;
         }
-        private  List<WeatherClass> ConvertToWeatherClass(RootObject rootObject)
+        private IList<WeatherClass> ConvertToWeatherClass(RootObject rootObject)
         {
             daily = new List<WeatherClass>();
 

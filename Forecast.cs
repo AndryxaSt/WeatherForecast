@@ -17,17 +17,17 @@ namespace WeatherForecast
         AccuWeather accuWeather; //12hourly, 5daily
         DateTime timeNow;
 
-        List<WeatherClass> weatherBits, openWeathers;
-        List<WeatherClass>[] darkSkys, accuWeathers;
+        IList<WeatherClass> weatherBits, openWeathers;
+        IList<WeatherClass>[] darkSkys, accuWeathers;
 
         Dictionary<string, string> tokens;
         public Forecast()
         {
             tokens = GetTokens();
-            openWeather = new OpenWeather(tokens["OpenWeather"]);
-            darkSky = new DarkSky(tokens["DarkSky"]);
-            weatherBit = new WeatherBit(tokens["WeatherBit"]);
-            accuWeather = new AccuWeather(tokens["AccuWeather"]);
+            openWeather = new OpenWeather(tokens["OpenWeather"], "test");
+            darkSky = new DarkSky(tokens["DarkSky"], "51.381764,33.460309");
+            weatherBit = new WeatherBit(tokens["WeatherBit"], "test");
+            accuWeather = new AccuWeather(tokens["AccuWeather"], "51.381764,33.460309");
         }
 
 
@@ -75,7 +75,7 @@ namespace WeatherForecast
                                       WindDirection = (d.WindDirection + w.WindDirection + a.WindDirection) / 3,
                                       WindDirectionString = ConvertBearingToDirection((d.WindDirection + w.WindDirection + a.WindDirection) / 3),
                                       WindSpeed = (d.WindSpeed + w.WindSpeed + a.WindSpeed) / 3,
-                                      WeatherCode = 0,//Заглушка
+                                      WeatherCode = WeatherCodeComparison(new int[3] { a.WeatherCode, d.WeatherCode, w.WeatherCode }),
                                       PrecipProbability = (d.PrecipProbability + w.PrecipProbability + a.PrecipProbability) / 3,
                                       Clouds = w.Clouds,
                                       CloudsValue = (d.CloudsValue + w.CloudsValue + a.CloudsValue) / 3,
@@ -87,7 +87,6 @@ namespace WeatherForecast
             Display(midDailyWeather);
 
         }
-
         public void GetThreeHourlyForecast()
         {
             GetWeather();
@@ -103,7 +102,7 @@ namespace WeatherForecast
                                             WindDirection = (d.WindDirection + o.WindDirection) / 2,
                                             WindDirectionString = ConvertBearingToDirection((d.WindDirection + o.WindDirection) / 2),
                                             WindSpeed = (d.WindSpeed + o.WindSpeed) / 2,
-                                            WeatherCode = 0,//Заглушка
+                                            WeatherCode = WeatherCodeComparison(new int[2] { o.WeatherCode, d.WeatherCode }),
                                             PrecipProbability = 0,//Заглушка
                                             Clouds = o.Clouds,
                                             CloudsValue = (d.CloudsValue + o.CloudsValue) / 2,
@@ -129,7 +128,7 @@ namespace WeatherForecast
                                        WindDirection = (d.WindDirection + a.WindDirection) / 2,
                                        WindDirectionString = ConvertBearingToDirection((d.WindDirection + a.WindDirection) / 2),
                                        WindSpeed = (d.WindSpeed + a.WindSpeed) / 2,
-                                       WeatherCode = 0,//Заглушка
+                                       WeatherCode = WeatherCodeComparison(new int[2] { a.WeatherCode, d.WeatherCode }),
                                        PrecipProbability = (d.PrecipProbability + a.PrecipProbability) / 2,
                                        Clouds = a.Clouds,
                                        CloudsValue = (d.CloudsValue + a.CloudsValue) / 2,
@@ -139,6 +138,7 @@ namespace WeatherForecast
 
             Display(midHourlyWeather);
         }
+
 
         private string ConvertToString(WeatherClass inpWeather)//TODO: Переделать на StringBuilder
         {
@@ -249,7 +249,13 @@ namespace WeatherForecast
 
             return tokens;
         }
+        private int WeatherCodeComparison(int[] codes)
+        {
 
-       
+
+            return 1;
+        }
+
+
     }
 }

@@ -12,15 +12,10 @@ using ForecastIO;
 
 namespace WeatherForecast
 {
-    class DarkSky
+    class DarkSky : InputForecast.AbdtractInputWeather
     {
-        readonly string token;
 
-        Example weather;
-
-        List<WeatherClass> hourly;
-        List<WeatherClass> threeHourly;
-        List<WeatherClass> daily;
+        RootObject weather;
 
         static DateTime ConvertFromUnixToDateTime(double unixTime)
         {
@@ -140,7 +135,7 @@ namespace WeatherForecast
             public string units { get; set; }
         }
 
-        public class Example
+        public class RootObject
         {
             public double latitude { get; set; }
             public double longitude { get; set; }
@@ -152,16 +147,16 @@ namespace WeatherForecast
             public int offset { get; set; }
         }
         #endregion
-        public DarkSky(string token)
+        public DarkSky(string token, string location) : base(token, location)
         {
-            this.token = token;
+
         }
-       
-        private Example GetWeather() //https://darksky.net/dev/account
+
+        private RootObject GetWeather() //https://darksky.net/dev/account
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            WebRequest requestBit = WebRequest.Create(@"https://api.darksky.net/forecast/" + token + "/51.381764,33.460309?units=si&lang=ru&extend=hourly");
+            WebRequest requestBit = WebRequest.Create(@"https://api.darksky.net/forecast/" + token + "/" + location + "?units=si&lang=ru&extend=hourly");
             using (WebResponse response = requestBit.GetResponse())
             {
                 using (Stream stream = response.GetResponseStream())
@@ -170,15 +165,15 @@ namespace WeatherForecast
                     {
                         string input = reader.ReadToEnd();
 
-                        Example example = JsonConvert.DeserializeObject<Example>(input);
+                        RootObject rootObject = JsonConvert.DeserializeObject<RootObject>(input);
 
-                        return example;
+                        return rootObject;
                     }
                 }
             }
         }
 
-        public List<WeatherClass>[] GetFullWeather()
+        public IList<WeatherClass>[] GetFullWeather()
         {
             if (weather == null || ConvertFromUnixToDateTime(weather.hourly.data[0].time).Day < DateTime.Now.Day)
             { weather = GetWeather(); }
@@ -186,10 +181,10 @@ namespace WeatherForecast
             hourly = GetHourly(weather);
             threeHourly = GetThreeHourly(weather);
             daily = GetDaily(weather);
-            return new List<WeatherClass>[3] {hourly, threeHourly, daily };
+            return new IList<WeatherClass>[3] { hourly, threeHourly, daily };
         }
 
-        private List<WeatherClass> GetHourly(Example weather)
+        private IList<WeatherClass> GetHourly(RootObject weather)
         {
             hourly = new List<WeatherClass>();
 
@@ -214,7 +209,7 @@ namespace WeatherForecast
 
         }
 
-        private List<WeatherClass> GetThreeHourly(Example weather)
+        private IList<WeatherClass> GetThreeHourly(RootObject weather)
         {
             threeHourly = new List<WeatherClass>();
 
@@ -242,7 +237,7 @@ namespace WeatherForecast
             return threeHourly;
         }
 
-        private List<WeatherClass> GetDaily(Example weather)
+        private IList<WeatherClass> GetDaily(RootObject weather)
         {
             daily = new List<WeatherClass>();
 
@@ -255,7 +250,7 @@ namespace WeatherForecast
                     TempMin = item.temperatureMin,
                     WindDirection = item.windBearing,
                     WindSpeed = item.windSpeed,
-                    WeatherCode =ChangeCode(item.icon),
+                    WeatherCode = ChangeCode(item.icon),
                     PrecipProbability = item.precipProbability * 100,
                     Clouds = item.icon,
                     CloudsValue = item.cloudCover * 100,
@@ -295,7 +290,7 @@ namespace WeatherForecast
                     return 1;
             }
 
-        }
+        } // This method changes the weather code to a common code.
 
     }
 }

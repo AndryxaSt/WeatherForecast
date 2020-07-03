@@ -9,13 +9,14 @@ using System.IO;
 namespace WeatherForecast
 {
 
-    class OpenWeather
+    class OpenWeather : InputForecast.AbdtractInputWeather
     {
-        readonly string token;
-        public OpenWeather(string token)
+        
+        public OpenWeather(string token, string location) : base(token, location)
         {
-            this.token = token;
+
         }
+
         private double ConvertDirectionToBearing(string directionInput)
         {
 
@@ -253,7 +254,7 @@ namespace WeatherForecast
 
                
             }
-        }
+        }// This method changes the weather code to a common code.
 
     }
 }
