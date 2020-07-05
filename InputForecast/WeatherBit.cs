@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace WeatherForecast
 {
-     class WeatherBit: InputForecast.AbdtractInputWeather//https://www.weatherbit.io
+    class WeatherBit : InputForecast.AbstractInputWeather//https://www.weatherbit.io
     {
-        
+
         public WeatherBit(string token, string location) : base(token, location)
         {
 
@@ -166,8 +166,8 @@ namespace WeatherForecast
 
         private RootObject GetWeather()
         {
-            WebRequest requestBit = WebRequest.Create(@"https://api.weatherbit.io/v2.0/forecast/daily?city=Konotop&country=ua&days=6&units=M&lang=ru&key="+token);
-            /           /
+            WebRequest requestBit = WebRequest.Create(@"https://api.weatherbit.io/v2.0/forecast/daily?lat=" + location.Split(',')[0] + "&lon=" + location.Split(',')[1] + "&days=6&units=M&lang=ru&key=" + token);
+            
             using (WebResponse response = requestBit.GetResponse())
             {
                 using (Stream stream = response.GetResponseStream())
@@ -198,7 +198,7 @@ namespace WeatherForecast
             foreach (var item in rootObject.data)
             {
                 daily.Add(new WeatherClass
-                    
+
                 {
                     Date = Convert.ToDateTime(item.valid_date),
                     TempMax = item.max_temp,

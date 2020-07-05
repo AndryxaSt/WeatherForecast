@@ -9,9 +9,9 @@ using System.IO;
 namespace WeatherForecast
 {
 
-    class OpenWeather : InputForecast.AbdtractInputWeather
+    class OpenWeather : InputForecast.AbstractInputWeather
     {
-        
+
         public OpenWeather(string token, string location) : base(token, location)
         {
 
@@ -106,7 +106,7 @@ namespace WeatherForecast
         public async Task<List<WeatherClass>> GetWeather()
         {
             OpenWeatherMapClient client = new OpenWeatherMapClient(token);
-            var currentWeather = await client.Forecast.GetByCityId(686875, false, MetricSystem.Metric, OpenWeatherMapLanguage.RU);
+            var currentWeather = await client.Forecast.GetByCoordinates(new Coordinates { Longitude = Convert.ToDouble(location.Split(',')[0]), Latitude = Convert.ToDouble(location.Split(',')[1]) }, false, MetricSystem.Metric, OpenWeatherMapLanguage.RU);
 
             return ConvertToWeatherClass(currentWeather.Forecast);
 
@@ -114,11 +114,11 @@ namespace WeatherForecast
 
         private List<WeatherClass> ConvertToWeatherClass(ForecastTime[] forecast)
         {
-            List<WeatherClass> ThreeHourly = new List<WeatherClass>();
+            threeHourly = new List<WeatherClass>();
 
             foreach (var item in forecast)
             {
-                ThreeHourly.Add(new WeatherClass
+                threeHourly.Add(new WeatherClass
                 {
                     Date = item.From,
                     TempMax = item.Temperature.Max,
@@ -131,14 +131,14 @@ namespace WeatherForecast
                 });
             }
 
-            return ThreeHourly;
+            return threeHourly;
         }
 
         int ChangeCode(int inputCode)
         {
             switch (inputCode)
             {
-                case 200: 
+                case 200:
                     return 200;
                 case 201:
                     return 201;
@@ -248,11 +248,11 @@ namespace WeatherForecast
                     return 803;
                 case 804:
                     return 804;
-                
+
                 default:
                     return 1;
 
-               
+
             }
         }// This method changes the weather code to a common code.
 

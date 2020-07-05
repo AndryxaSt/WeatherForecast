@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace WeatherForecast.InputForecast
 {
-    abstract class AbdtractInputWeather
+    abstract class AbstractInputWeather
     {
         protected string token { get; set; }
         protected string location { get; set; }
 
-        public AbdtractInputWeather(string token, string location)
+        public AbstractInputWeather(string token, string location)
         {
             this.token = token;
             this.location = location;

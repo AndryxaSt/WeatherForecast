@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace WeatherForecast
 {
-    class AccuWeather : InputForecast.AbdtractInputWeather
+    class AccuWeather : InputForecast.AbstractInputWeather
 
     {   //5day forecast http://dataservice.accuweather.com/forecasts/v1/daily/5day/325693?apikey="+token+"&language=ru-ru&metric=true
         //12hourly forecast http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/325693?apikey="+token+"&language=ru-ru&metric=true

@@ -16,18 +16,19 @@ namespace WeatherForecast
         WeatherBit weatherBit; //daily
         AccuWeather accuWeather; //12hourly, 5daily
         DateTime timeNow;
-
+        string location;
         IList<WeatherClass> weatherBits, openWeathers;
         IList<WeatherClass>[] darkSkys, accuWeathers;
 
         Dictionary<string, string> tokens;
-        public Forecast()
+        public Forecast(string location = "51.381764,33.460309")
         {
             tokens = GetTokens();
-            openWeather = new OpenWeather(tokens["OpenWeather"], "test");
-            darkSky = new DarkSky(tokens["DarkSky"], "51.381764,33.460309");
-            weatherBit = new WeatherBit(tokens["WeatherBit"], "test");
-            accuWeather = new AccuWeather(tokens["AccuWeather"], "51.381764,33.460309");
+            //openWeather = new OpenWeather(tokens["OpenWeather"], location);
+            darkSky = new DarkSky(tokens["DarkSky"], location);
+            weatherBit = new WeatherBit(tokens["WeatherBit"], location);
+            accuWeather = new AccuWeather(tokens["AccuWeather"], location);
+            this.location = location;
         }
 
 
@@ -40,10 +41,10 @@ namespace WeatherForecast
             {
                 weatherBits = weatherBit.GetDaily();
             }
-            if (openWeathers == null || openWeathers[0].Date.Day < timeNow.Day)
-            {
-                openWeathers = openWeather.GetWeather().Result;
-            }
+            //if (openWeathers == null || openWeathers[0].Date.Day < timeNow.Day)
+            //{
+            //    openWeathers = openWeather.GetWeather().Result;
+            //}
             if (darkSkys == null || darkSkys[0][0].Date.Day < timeNow.Day)
             {
                 darkSkys = darkSky.GetFullWeather();

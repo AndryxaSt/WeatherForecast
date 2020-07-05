@@ -12,7 +12,7 @@ using ForecastIO;
 
 namespace WeatherForecast
 {
-    class DarkSky : InputForecast.AbdtractInputWeather
+    class DarkSky : InputForecast.AbstractInputWeather
     {
 
         RootObject weather;
