@@ -14,7 +14,6 @@ namespace WeatherForecast
 
         public OpenWeather(string token, string location) : base(token, location)
         {
-
         }
 
         private double ConvertDirectionToBearing(string directionInput)
@@ -103,16 +102,19 @@ namespace WeatherForecast
 
             return 0;
         }
-        public async Task<List<WeatherClass>> GetWeather()
+        public async Task<IList<WeatherClass>> GetWeather()
         {
             OpenWeatherMapClient client = new OpenWeatherMapClient(token);
-            var currentWeather = await client.Forecast.GetByCoordinates(new Coordinates { Longitude = Convert.ToDouble(location.Split(',')[0]), Latitude = Convert.ToDouble(location.Split(',')[1]) }, false, MetricSystem.Metric, OpenWeatherMapLanguage.RU);
+            var currentWeather = await client.Forecast.GetByCoordinates(new Coordinates() { Longitude = Convert.ToDouble(location.Split(',')[0].Replace('.', ',')), Latitude = Convert.ToDouble(location.Split(',')[1].Replace('.', ',')) },
+                                                                        false,
+                                                                        MetricSystem.Metric,
+                                                                        OpenWeatherMapLanguage.RU);
 
             return ConvertToWeatherClass(currentWeather.Forecast);
 
         }
 
-        private List<WeatherClass> ConvertToWeatherClass(ForecastTime[] forecast)
+        private IList<WeatherClass> ConvertToWeatherClass(ForecastTime[] forecast)
         {
             threeHourly = new List<WeatherClass>();
 
