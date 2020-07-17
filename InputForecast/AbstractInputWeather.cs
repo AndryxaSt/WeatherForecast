@@ -21,6 +21,5 @@ namespace WeatherForecast.InputForecast
         protected IList<WeatherClass> threeHourly;
         protected IList<WeatherClass> daily;
 
-
     }
 }

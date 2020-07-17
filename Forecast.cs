@@ -24,34 +24,34 @@ namespace WeatherForecast
         public Forecast(string location = "51.381764,33.460309")
         {
             tokens = GetTokens();
-            //openWeather = new OpenWeather(tokens["OpenWeather"], location);
+            openWeather = new OpenWeather(tokens["OpenWeather"], location);
             darkSky = new DarkSky(tokens["DarkSky"], location);
             weatherBit = new WeatherBit(tokens["WeatherBit"], location);
-            accuWeather = new AccuWeather(tokens["AccuWeather"], location);
+            accuWeather = new AccuWeather(tokens["AccuWeather"], "325693");//TODO: Исправить получение погоды по координатам (https://www.accuweather.com/ru/search-locations?query=54.9924%2C+73.3686)
             this.location = location;
         }
 
 
-        private void GetWeather()
+        void GetWeather()
 
         {
             timeNow = DateTime.Now;
 
             if (weatherBits == null || weatherBits[0].Date.Day < timeNow.Day)
             {
-                weatherBits = weatherBit.GetDaily();
+                weatherBits = weatherBit.GetWeather();
             }
-            //if (openWeathers == null || openWeathers[0].Date.Day < timeNow.Day)
-            //{
-            //    openWeathers = openWeather.GetWeather().Result;
-            //}
+            if (openWeathers == null || openWeathers[0].Date.Day < timeNow.Day)
+            {
+                openWeathers = openWeather.GetWeather().Result;
+            }
             if (darkSkys == null || darkSkys[0][0].Date.Day < timeNow.Day)
             {
-                darkSkys = darkSky.GetFullWeather();
+                darkSkys = darkSky.GetWeather();
             }
             if (accuWeathers == null || accuWeathers[0][0].Date.Day < timeNow.Day)
             {
-                accuWeathers = accuWeather.GetFullWeather();
+                accuWeathers = accuWeather.GetWeather();
             }
 
         }
@@ -141,7 +141,7 @@ namespace WeatherForecast
         }
 
 
-        private string ConvertToString(WeatherClass inpWeather)//TODO: Переделать на StringBuilder
+        string ConvertToString(WeatherClass inpWeather)//TODO: Переделать на StringBuilder
         {
 
             string weather = $@"{inpWeather.Date.ToLongDateString()}{inpWeather.Date.ToShortTimeString()}
@@ -153,76 +153,76 @@ namespace WeatherForecast
             return weather;
 
         }
-        private string ConvertBearingToDirection(double bearing)
+        string ConvertBearingToDirection(double inputBearing)
         {
-            double bearing2 = bearing;
+            double outputBearing = inputBearing;
 
 
-            if (bearing2 <= 11.25)
+            if (outputBearing <= 11.25)
             {
                 return "С";
             }
-            if (bearing2 > 11.25 && bearing2 <= 33.75)
+            if (outputBearing > 11.25 && outputBearing <= 33.75)
             {
                 return "ССВ";
             }
-            if (bearing2 > 33.75 && bearing2 <= 56.25)
+            if (outputBearing > 33.75 && outputBearing <= 56.25)
             {
                 return "СВ";
             }
-            if (bearing2 > 56.25 && bearing2 <= 78.75)
+            if (outputBearing > 56.25 && outputBearing <= 78.75)
             {
                 return "ВСВ";
             }
-            if (bearing2 > 78.75 && bearing2 <= 101.25)
+            if (outputBearing > 78.75 && outputBearing <= 101.25)
             {
                 return "В";
             }
-            if (bearing2 > 101.25 && bearing2 <= 123.75)
+            if (outputBearing > 101.25 && outputBearing <= 123.75)
             {
                 return "ВЮВ";
             }
-            if (bearing2 > 123.75 && bearing2 <= 146.25)
+            if (outputBearing > 123.75 && outputBearing <= 146.25)
             {
                 return "ЮВ";
             }
-            if (bearing2 > 146.25 && bearing2 <= 168.75)
+            if (outputBearing > 146.25 && outputBearing <= 168.75)
             {
                 return "ЮЮВ";
             }
-            if (bearing2 > 168.75 && bearing2 <= 191.25)
+            if (outputBearing > 168.75 && outputBearing <= 191.25)
             {
                 return "Ю";
             }
-            if (bearing2 > 191.25 && bearing2 <= 213.75)
+            if (outputBearing > 191.25 && outputBearing <= 213.75)
             {
                 return "ЮЮЗ";
             }
-            if (bearing2 > 213.75 && bearing2 <= 236.25)
+            if (outputBearing > 213.75 && outputBearing <= 236.25)
             {
                 return "ЮЗ";
             }
-            if (bearing2 > 236.25 && bearing2 <= 258.75)
+            if (outputBearing > 236.25 && outputBearing <= 258.75)
             {
                 return "ЗЮЗ";
             }
-            if (bearing2 > 258.75 && bearing2 <= 281.25)
+            if (outputBearing > 258.75 && outputBearing <= 281.25)
             {
                 return "З";
             }
-            if (bearing2 > 281.25 && bearing2 <= 303.75)
+            if (outputBearing > 281.25 && outputBearing <= 303.75)
             {
                 return "ЗСЗ";
             }
-            if (bearing2 > 303.75 && bearing2 <= 326.25)
+            if (outputBearing > 303.75 && outputBearing <= 326.25)
             {
                 return "СЗ";
             }
-            if (bearing2 > 326.25 && bearing2 <= 348.75)
+            if (outputBearing > 326.25 && outputBearing <= 348.75)
             {
                 return "ССЗ";
             }
-            if (bearing2 > 326.25)
+            if (outputBearing > 326.25)
             {
                 return "С";
             }
@@ -230,14 +230,14 @@ namespace WeatherForecast
             return string.Empty;
 
         }
-        private void Display(IEnumerable<WeatherClass> weathers)
+        void Display(IEnumerable<WeatherClass> forecast)
         {
-            foreach (WeatherClass weather in weathers)
+            foreach (WeatherClass weather in forecast)
             {
                 Console.WriteLine(ConvertToString(weather));
             }
         }
-        private Dictionary<string, string> GetTokens()
+        Dictionary<string, string> GetTokens()
         {
             string[] tokenFile = File.ReadAllLines(@"Tokens.txt");
             var tokens = new Dictionary<string, string>();
@@ -250,7 +250,7 @@ namespace WeatherForecast
 
             return tokens;
         }
-        private int WeatherCodeComparison(int[] codes)
+        int WeatherCodeComparison(int[] codes)
         {
 
 
