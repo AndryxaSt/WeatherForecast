@@ -164,7 +164,7 @@ namespace WeatherForecast
             return 0;
         }
 
-        private RootObject GetWeather()
+        private RootObject GetWeatherFromServer()
         {
             WebRequest requestBit = WebRequest.Create(@"https://api.weatherbit.io/v2.0/forecast/daily?lat=" + location.Split(',')[0] + "&lon=" + location.Split(',')[1] + "&days=6&units=M&lang=ru&key=" + token);
             
@@ -184,9 +184,9 @@ namespace WeatherForecast
             }
         }
 
-        public IList<WeatherClass> GetDaily()
+        public IList<WeatherClass> GetWeather()
         {
-            daily = ConvertToWeatherClass(GetWeather());
+            daily = ConvertToWeatherClass(GetWeatherFromServer());
 
             return daily;
         }

@@ -349,7 +349,7 @@ namespace WeatherForecast
 
         }
 
-        public IList<WeatherClass>[] GetFullWeather()
+        public IList<WeatherClass>[] GetWeather()
         {
             IList<WeatherClass>[] fullWeather = new List<WeatherClass>[2];
 

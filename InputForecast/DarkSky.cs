@@ -152,7 +152,7 @@ namespace WeatherForecast
 
         }
 
-        private RootObject GetWeather() //https://darksky.net/dev/account
+        private RootObject GetWeatherFromServer() //https://darksky.net/dev/account
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
@@ -173,10 +173,10 @@ namespace WeatherForecast
             }
         }
 
-        public IList<WeatherClass>[] GetFullWeather()
+        public IList<WeatherClass>[] GetWeather()
         {
             if (weather == null || ConvertFromUnixToDateTime(weather.hourly.data[0].time).Day < DateTime.Now.Day)
-            { weather = GetWeather(); }
+            { weather = GetWeatherFromServer(); }
 
             hourly = GetHourly(weather);
             threeHourly = GetThreeHourly(weather);
