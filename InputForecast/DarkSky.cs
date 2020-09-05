@@ -184,6 +184,7 @@ namespace WeatherForecast
             return new IList<WeatherClass>[3] { hourly, threeHourly, daily };
         }
 
+
         private IList<WeatherClass> GetHourly(RootObject weather)
         {
             hourly = new List<WeatherClass>();

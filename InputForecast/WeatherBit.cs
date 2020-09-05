@@ -77,6 +77,61 @@ namespace WeatherForecast
         }
         #endregion
 
+        
+
+        private RootObject GetWeatherFromServer()
+        {
+            WebRequest requestBit = WebRequest.Create(@"https://api.weatherbit.io/v2.0/forecast/daily?lat=" + location.Split(',')[0] + "&lon=" + location.Split(',')[1] + "&days=6&units=M&lang=ru&key=" + token);
+            
+            using (WebResponse response = requestBit.GetResponse())
+            {
+                using (Stream stream = response.GetResponseStream())
+                {
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        string input = reader.ReadToEnd();
+
+                        RootObject rootObject = JsonConvert.DeserializeObject<RootObject>(input);
+
+                        return rootObject;
+                    }
+                }
+            }
+        }
+
+        public IList<WeatherClass> GetWeather()
+        {
+            daily = ConvertToWeatherClass(GetWeatherFromServer());
+
+            return daily;
+        }
+
+        private IList<WeatherClass> ConvertToWeatherClass(RootObject rootObject)
+        {
+            daily = new List<WeatherClass>();
+
+
+            foreach (var item in rootObject.data)
+            {
+                daily.Add(new WeatherClass
+
+                {
+                    Date = Convert.ToDateTime(item.valid_date),
+                    TempMax = item.max_temp,
+                    TempMin = item.min_temp,
+                    WindDirection = ConvertDirectionToBearing(item.wind_cdir),
+                    WindSpeed = item.wind_spd,
+                    WeatherCode = item.weather.code,
+                    PrecipProbability = item.pop,
+                    Clouds = item.weather.description,
+                    CloudsValue = item.clouds,
+                    Visibility = item.vis
+                });
+            }
+
+            return daily;
+        }
+
         private static double ConvertDirectionToBearing(string directionInput)
         {
 
@@ -162,58 +217,6 @@ namespace WeatherForecast
             }
 
             return 0;
-        }
-
-        private RootObject GetWeatherFromServer()
-        {
-            WebRequest requestBit = WebRequest.Create(@"https://api.weatherbit.io/v2.0/forecast/daily?lat=" + location.Split(',')[0] + "&lon=" + location.Split(',')[1] + "&days=6&units=M&lang=ru&key=" + token);
-            
-            using (WebResponse response = requestBit.GetResponse())
-            {
-                using (Stream stream = response.GetResponseStream())
-                {
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        string input = reader.ReadToEnd();
-
-                        RootObject rootObject = JsonConvert.DeserializeObject<RootObject>(input);
-
-                        return rootObject;
-                    }
-                }
-            }
-        }
-
-        public IList<WeatherClass> GetWeather()
-        {
-            daily = ConvertToWeatherClass(GetWeatherFromServer());
-
-            return daily;
-        }
-        private IList<WeatherClass> ConvertToWeatherClass(RootObject rootObject)
-        {
-            daily = new List<WeatherClass>();
-
-
-            foreach (var item in rootObject.data)
-            {
-                daily.Add(new WeatherClass
-
-                {
-                    Date = Convert.ToDateTime(item.valid_date),
-                    TempMax = item.max_temp,
-                    TempMin = item.min_temp,
-                    WindDirection = ConvertDirectionToBearing(item.wind_cdir),
-                    WindSpeed = item.wind_spd,
-                    WeatherCode = item.weather.code,
-                    PrecipProbability = item.pop,
-                    Clouds = item.weather.description,
-                    CloudsValue = item.clouds,
-                    Visibility = item.vis
-                });
-            }
-
-            return daily;
         }
     }
 }

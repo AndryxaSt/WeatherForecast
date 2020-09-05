@@ -17,9 +17,11 @@ namespace WeatherForecast.InputForecast
             this.location = location;
         }
 
-        protected IList<WeatherClass> hourly;
-        protected IList<WeatherClass> threeHourly;
-        protected IList<WeatherClass> daily;
+        protected IList<WeatherClass> hourly { get;  set; }
+        protected IList<WeatherClass> threeHourly { get;  set; }
+        protected IList<WeatherClass> daily { get;  set; }
+        //abstract public Task<IList<WeatherClass>> GetWeather();
+       
 
     }
 }
