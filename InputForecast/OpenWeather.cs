@@ -102,10 +102,10 @@ namespace WeatherForecast
 
             return 0;
         }
-        public async Task<IList<WeatherClass>> GetWeather()
+        public async Task<IList<WeatherClass>> GetWeatherAsync()
         {
             OpenWeatherMapClient client = new OpenWeatherMapClient(token);
-            var currentWeather = await client.Forecast.GetByCoordinates(new Coordinates() { Longitude = Convert.ToDouble(location.Split(',')[0].Replace('.', ',')), Latitude = Convert.ToDouble(location.Split(',')[1].Replace('.', ',')) },
+            var currentWeather = await client.Forecast.GetByCoordinates(new Coordinates() { Longitude = Convert.ToDouble(location.Split(',')[0].Replace(',', '.')), Latitude = Convert.ToDouble(location.Split(',')[1].Replace(',', '.')) },
                                                                         false,
                                                                         MetricSystem.Metric,
                                                                         OpenWeatherMapLanguage.RU);
