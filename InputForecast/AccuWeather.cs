@@ -11,145 +11,15 @@ namespace WeatherForecast
 {
     class AccuWeather : InputForecast.AbstractInputWeather
 
-    {   //5day forecast http://dataservice.accuweather.com/forecasts/v1/daily/5day/325693?apikey="+token+"&language=ru-ru&metric=true
-        //12hourly forecast http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/325693?apikey="+token+"&language=ru-ru&metric=true
-
-
-        public AccuWeather(string token, string location) : base (token, location)
+    {   
+        public AccuWeather(string token, string location) : base(token, location)
         {
 
         }
 
         #region JsonClasses
-        public class Temperature
-        {
-            public double Value { get; set; }
-            public string Unit { get; set; }
-            public int UnitType { get; set; }
-        }
 
-        public class RealFeelTemperature
-        {
-            public double Value { get; set; }
-            public string Unit { get; set; }
-            public int UnitType { get; set; }
-        }
-
-        public class WetBulbTemperature
-        {
-            public double Value { get; set; }
-            public string Unit { get; set; }
-            public int UnitType { get; set; }
-        }
-
-        public class DewPoint
-        {
-            public double Value { get; set; }
-            public string Unit { get; set; }
-            public int UnitType { get; set; }
-        }
-
-        public class Speed
-        {
-            public double Value { get; set; }
-            public string Unit { get; set; }
-            public int UnitType { get; set; }
-        }
-
-        public class Direction
-        {
-            public int Degrees { get; set; }
-            public string Localized { get; set; }
-            public string English { get; set; }
-        }
-
-        public class Wind
-        {
-            public Speed Speed { get; set; }
-            public Direction Direction { get; set; }
-        }
-
-        public class WindGust
-        {
-            public Speed Speed { get; set; }
-        }
-
-        public class Visibility
-        {
-            public double Value { get; set; }
-            public string Unit { get; set; }
-            public int UnitType { get; set; }
-        }
-
-        public class Ceiling
-        {
-            public double Value { get; set; }
-            public string Unit { get; set; }
-            public int UnitType { get; set; }
-        }
-
-        public class TotalLiquid
-        {
-            public double Value { get; set; }
-            public string Unit { get; set; }
-            public int UnitType { get; set; }
-        }
-
-        public class Rain
-        {
-            public double Value { get; set; }
-            public string Unit { get; set; }
-            public int UnitType { get; set; }
-        }
-
-        public class Snow
-        {
-            public double Value { get; set; }
-            public string Unit { get; set; }
-            public int UnitType { get; set; }
-        }
-
-        public class Ice
-        {
-            public double Value { get; set; }
-            public string Unit { get; set; }
-            public int UnitType { get; set; }
-        }
-
-        public class Hourly
-        {
-            public DateTime DateTime { get; set; }
-            public int EpochDateTime { get; set; }
-            public int WeatherIcon { get; set; }
-            public string IconPhrase { get; set; }
-            public bool HasPrecipitation { get; set; }
-            public bool IsDaylight { get; set; }
-            public Temperature Temperature { get; set; }
-            public RealFeelTemperature RealFeelTemperature { get; set; }
-            public WetBulbTemperature WetBulbTemperature { get; set; }
-            public DewPoint DewPoint { get; set; }
-            public Wind Wind { get; set; }
-            public WindGust WindGust { get; set; }
-            public int RelativeHumidity { get; set; }
-            public int IndoorRelativeHumidity { get; set; }
-            public Visibility Visibility { get; set; }
-            public Ceiling Ceiling { get; set; }
-            public int UVIndex { get; set; }
-            public string UVIndexText { get; set; }
-            public int PrecipitationProbability { get; set; }
-            public int RainProbability { get; set; }
-            public int SnowProbability { get; set; }
-            public int IceProbability { get; set; }
-            public TotalLiquid TotalLiquid { get; set; }
-            public Rain Rain { get; set; }
-            public Snow Snow { get; set; }
-            public Ice Ice { get; set; }
-            public int CloudCover { get; set; }
-            public string MobileLink { get; set; }
-            public string Link { get; set; }
-        }
-
-
+        //Daily
         public class Headline
         {
             public DateTime EffectiveDate { get; set; }
@@ -195,8 +65,6 @@ namespace WeatherForecast
             public int UnitType { get; set; }
         }
 
-
-
         public class RealFeelTemperatureShade
         {
             public Minimum Minimum { get; set; }
@@ -232,11 +100,67 @@ namespace WeatherForecast
             public string Type { get; set; }
         }
 
+        public class Speed
+        {
+            public double Value { get; set; }
+            public string Unit { get; set; }
+            public int UnitType { get; set; }
+        }
+
+        public class Direction
+        {
+            public int Degrees { get; set; }
+            public string Localized { get; set; }
+            public string English { get; set; }
+        }
+
+        public class Wind
+        {
+            public Speed Speed { get; set; }
+            public Direction Direction { get; set; }
+        }
+
+        public class WindGust
+        {
+            public Speed speed { get; set; }
+            public Direction direction { get; set; }
+        }
+
+        public class TotalLiquid
+        {
+            public double Value { get; set; }
+            public string Unit { get; set; }
+            public int UnitType { get; set; }
+        }
+
+        public class Rain
+        {
+            public double Value { get; set; }
+            public string Unit { get; set; }
+            public int UnitType { get; set; }
+        }
+
+        public class Snow
+        {
+            public double Value { get; set; }
+            public string Unit { get; set; }
+            public int UnitType { get; set; }
+        }
+
+        public class Ice
+        {
+            public double Value { get; set; }
+            public string Unit { get; set; }
+            public int UnitType { get; set; }
+        }
+
         public class Day
         {
             public int Icon { get; set; }
             public string IconPhrase { get; set; }
             public bool HasPrecipitation { get; set; }
+            public string PrecipitationType { get; set; }
+            public string PrecipitationIntensity { get; set; }
             public string ShortPhrase { get; set; }
             public string LongPhrase { get; set; }
             public int PrecipitationProbability { get; set; }
@@ -255,8 +179,6 @@ namespace WeatherForecast
             public double HoursOfSnow { get; set; }
             public double HoursOfIce { get; set; }
             public int CloudCover { get; set; }
-            public string PrecipitationType { get; set; }
-            public string PrecipitationIntensity { get; set; }
         }
 
         public class Night
@@ -271,12 +193,12 @@ namespace WeatherForecast
             public int RainProbability { get; set; }
             public int SnowProbability { get; set; }
             public int IceProbability { get; set; }
-            public Wind Wind { get; set; }
-            public WindGust WindGust { get; set; }
-            public TotalLiquid TotalLiquid { get; set; }
-            public Rain Rain { get; set; }
-            public Snow Snow { get; set; }
-            public Ice Ice { get; set; }
+            public Wind wind { get; set; }
+            public WindGust windGust { get; set; }
+            public TotalLiquid totalLiquid { get; set; }
+            public Rain rain { get; set; }
+            public Snow snow { get; set; }
+            public Ice ice { get; set; }
             public double HoursOfPrecipitation { get; set; }
             public double HoursOfRain { get; set; }
             public double HoursOfSnow { get; set; }
@@ -308,10 +230,106 @@ namespace WeatherForecast
             public Headline Headline { get; set; }
             public IList<DailyForecast> DailyForecasts { get; set; }
         }
-        #endregion
+
+        //Hourly
+
+        public class Temperature
+        {
+            public double Value { get; set; }
+            public string Unit { get; set; }
+            public int UnitType { get; set; }
+            public Minimum Minimum { get; set; }
+            public Maximum Maximum { get; set; }
+
+        }
+
+        public class RealFeelTemperature
+        {
+            public double Value { get; set; }
+            public string Unit { get; set; }
+            public int UnitType { get; set; }
+            public Minimum min { get; set; }
+            public Maximum max { get; set; }
+        }
+        
+
+        public class WetBulbTemperature
+        {
+            public double Value { get; set; }
+            public string Unit { get; set; }
+            public int UnitType { get; set; }
+        }
+
+        public class DewPoint
+        {
+            public double Value { get; set; }
+            public string Unit { get; set; }
+            public int UnitType { get; set; }
+        }
+
+        
+    public class Visibility
+    {
+        public double Value { get; set; }
+        public string Unit { get; set; }
+        public int UnitType { get; set; }
+    }
+
+    public class Ceiling
+    {
+        public double Value { get; set; }
+        public string Unit { get; set; }
+        public int UnitType { get; set; }
+    }
+
+    public class Hourly
+    {
+        public DateTime DateTime { get; set; }
+        public int EpochDateTime { get; set; }
+        public int WeatherIcon { get; set; }
+        public string IconPhrase { get; set; }
+        public bool HasPrecipitation { get; set; }
+        public bool IsDaylight { get; set; }
+        public Temperature Temperature { get; set; }
+        public RealFeelTemperature RealFeelTemperature { get; set; }
+        public WetBulbTemperature WetBulbTemperature { get; set; }
+        public DewPoint DewPoint { get; set; }
+        public Wind Wind { get; set; }
+        public WindGust WindGust { get; set; }
+        public int RelativeHumidity { get; set; }
+        public int IndoorRelativeHumidity { get; set; }
+        public Visibility Visibility { get; set; }
+        public Ceiling Ceiling { get; set; }
+        public int UVIndex { get; set; }
+        public string UVIndexText { get; set; }
+        public int PrecipitationProbability { get; set; }
+        public int RainProbability { get; set; }
+        public int SnowProbability { get; set; }
+        public int IceProbability { get; set; }
+        public TotalLiquid TotalLiquid { get; set; }
+        public Rain Rain { get; set; }
+        public Snow Snow { get; set; }
+        public Ice Ice { get; set; }
+        public int CloudCover { get; set; }
+        public string MobileLink { get; set; }
+        public string Link { get; set; }
+    }
+    #endregion
+
+    public IList<WeatherClass>[] GetWeather()
+        {
+            IList<WeatherClass>[] fullWeather = new List<WeatherClass>[2];
+
+            fullWeather[0] = ConvertHourlyToWeatherClass(GetWeatherHourly());
+            fullWeather[1] = ConvertDailyToWeatherClass(GetWeatherDaily());
+
+            return fullWeather;
+        }
+
         private IList<Hourly> GetWeatherHourly()
         {
-            WebRequest requestBit = WebRequest.Create(@"http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/" + location + "?apikey=" + token + "&language=ru-ru&details=true&metric=true");//details
+            WebRequest requestBit = WebRequest.Create(@"http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/" + location + "?apikey=" + token + "&language=ru-ru&details=true&metric=true");
+
             using (WebResponse response = requestBit.GetResponse())
             {
                 using (Stream stream = response.GetResponseStream())
@@ -347,16 +365,6 @@ namespace WeatherForecast
             }
 
 
-        }
-
-        public IList<WeatherClass>[] GetWeather()
-        {
-            IList<WeatherClass>[] fullWeather = new List<WeatherClass>[2];
-
-            fullWeather[0] = ConvertHourlyToWeatherClass(GetWeatherHourly());
-            fullWeather[1] = ConvertDailyToWeatherClass(GetWeatherDaily());
-
-            return fullWeather;
         }
 
         private IList<WeatherClass> ConvertHourlyToWeatherClass(IList<Hourly> list)
@@ -412,6 +420,7 @@ namespace WeatherForecast
 
 
         }
+
         int ChangeCode(int inputCode)
         {
 
