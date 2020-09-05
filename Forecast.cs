@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
@@ -15,8 +14,10 @@ namespace WeatherForecast
         OpenWeather openWeather;//3hourly
         WeatherBit weatherBit; //daily
         AccuWeather accuWeather; //12hourly, 5daily
+
         DateTime timeNow;
         string location;
+
         IList<WeatherClass> weatherBits, openWeathers;
         IList<WeatherClass>[] darkSkys, accuWeathers;
 
@@ -43,7 +44,7 @@ namespace WeatherForecast
             }
             if (openWeathers == null || openWeathers[0].Date.Day < timeNow.Day)
             {
-                openWeathers = openWeather.GetWeather().Result;
+                openWeathers = openWeather.GetWeatherAsync().Result;
             }
             if (darkSkys == null || darkSkys[0][0].Date.Day < timeNow.Day)
             {
@@ -58,7 +59,7 @@ namespace WeatherForecast
 
         public void Test()
         {
-            GetHourlyForecast();
+            GetThreeHourlyForecast();
         }
         public void GetDailyForecast()
         {
@@ -71,15 +72,15 @@ namespace WeatherForecast
                                   select new WeatherClass()
                                   {
                                       Date = d.Date,
-                                      TempMax = (d.TempMax + w.TempMax + a.TempMax) / 3,
-                                      TempMin = (d.TempMin + w.TempMin + a.TempMin) / 3,
-                                      WindDirection = (d.WindDirection + w.WindDirection + a.WindDirection) / 3,
+                                      TempMax = Math.Round((d.TempMax + w.TempMax + a.TempMax) / 3, 1),
+                                      TempMin = Math.Round((d.TempMin + w.TempMin + a.TempMin) / 3, 1),
+                                      WindDirection = Math.Round((d.WindDirection + w.WindDirection + a.WindDirection) / 3, 1),
                                       WindDirectionString = ConvertBearingToDirection((d.WindDirection + w.WindDirection + a.WindDirection) / 3),
-                                      WindSpeed = (d.WindSpeed + w.WindSpeed + a.WindSpeed) / 3,
+                                      WindSpeed = Math.Round((d.WindSpeed + w.WindSpeed + a.WindSpeed) / 3, 1),
                                       WeatherCode = WeatherCodeComparison(new int[3] { a.WeatherCode, d.WeatherCode, w.WeatherCode }),
-                                      PrecipProbability = (d.PrecipProbability + w.PrecipProbability + a.PrecipProbability) / 3,
+                                      PrecipProbability = Math.Round((d.PrecipProbability + w.PrecipProbability + a.PrecipProbability) / 3, 1),
                                       Clouds = w.Clouds,
-                                      CloudsValue = (d.CloudsValue + w.CloudsValue + a.CloudsValue) / 3,
+                                      CloudsValue = Math.Round((d.CloudsValue + w.CloudsValue + a.CloudsValue) / 3, 1),
                                       Visibility = (d.Visibility + w.Visibility + a.Visibility) / 3,
                                       icon = "A",//Заглушка
 
@@ -98,15 +99,15 @@ namespace WeatherForecast
                                         select new WeatherClass()
                                         {
                                             Date = d.Date,
-                                            TempMax = (d.TempMax + o.TempMax) / 2,
-                                            TempMin = (d.TempMin + o.TempMin) / 2,
-                                            WindDirection = (d.WindDirection + o.WindDirection) / 2,
+                                            TempMax = Math.Round((d.TempMax + o.TempMax) / 2, 1),
+                                            TempMin = Math.Round((d.TempMin + o.TempMin) / 2, 1),
+                                            WindDirection = Math.Round((d.WindDirection + o.WindDirection) / 2, 1),
                                             WindDirectionString = ConvertBearingToDirection((d.WindDirection + o.WindDirection) / 2),
-                                            WindSpeed = (d.WindSpeed + o.WindSpeed) / 2,
+                                            WindSpeed = Math.Round((d.WindSpeed + o.WindSpeed) / 2, 1),
                                             WeatherCode = WeatherCodeComparison(new int[2] { o.WeatherCode, d.WeatherCode }),
                                             PrecipProbability = 0,//Заглушка
                                             Clouds = o.Clouds,
-                                            CloudsValue = (d.CloudsValue + o.CloudsValue) / 2,
+                                            CloudsValue = Math.Round((d.CloudsValue + o.CloudsValue) / 2, 1),
                                             Visibility = 0,//Заглушка
                                             icon = "A",//Заглушка
 
@@ -124,16 +125,16 @@ namespace WeatherForecast
                                    select new WeatherClass()
                                    {
                                        Date = d.Date,
-                                       TempMax = (d.TempMax + a.TempMax) / 2,
-                                       TempMin = (d.TempMin + a.TempMin) / 2,
-                                       WindDirection = (d.WindDirection + a.WindDirection) / 2,
+                                       TempMax = Math.Round((d.TempMax + a.TempMax) / 2, 1),
+                                       TempMin = Math.Round((d.TempMin + a.TempMin) / 2, 1),
+                                       WindDirection = Math.Round((d.WindDirection + a.WindDirection) / 2, 1),
                                        WindDirectionString = ConvertBearingToDirection((d.WindDirection + a.WindDirection) / 2),
-                                       WindSpeed = (d.WindSpeed + a.WindSpeed) / 2,
+                                       WindSpeed = Math.Round((d.WindSpeed + a.WindSpeed) / 2, 1),
                                        WeatherCode = WeatherCodeComparison(new int[2] { a.WeatherCode, d.WeatherCode }),
-                                       PrecipProbability = (d.PrecipProbability + a.PrecipProbability) / 2,
+                                       PrecipProbability = Math.Round((d.PrecipProbability + a.PrecipProbability) / 2, 1),
                                        Clouds = a.Clouds,
-                                       CloudsValue = (d.CloudsValue + a.CloudsValue) / 2,
-                                       Visibility = (d.Visibility + a.Visibility) / 2,
+                                       CloudsValue = Math.Round((d.CloudsValue + a.CloudsValue) / 2, 1),
+                                       Visibility = Math.Round((d.Visibility + a.Visibility) / 2, 1),
                                        icon = "A",//Заглушка
                                    };
 
@@ -141,18 +142,7 @@ namespace WeatherForecast
         }
 
 
-        string ConvertToString(WeatherClass inpWeather)//TODO: Переделать на StringBuilder
-        {
 
-            string weather = $@"{inpWeather.Date.ToLongDateString()}{inpWeather.Date.ToShortTimeString()}
-Температура: max:{inpWeather.TempMax} C
-             min:{inpWeather.TempMin} C, 
-Ветер: {ConvertBearingToDirection(inpWeather.WindDirection)} {inpWeather.WindSpeed} м\с, 
-{inpWeather.Clouds}, облачность: {inpWeather.CloudsValue}%
-Вероятность осадков: {inpWeather.PrecipProbability}% " + "\n";
-            return weather;
-
-        }
         string ConvertBearingToDirection(double inputBearing)
         {
             double outputBearing = inputBearing;
@@ -234,7 +224,7 @@ namespace WeatherForecast
         {
             foreach (WeatherClass weather in forecast)
             {
-                Console.WriteLine(ConvertToString(weather));
+                Console.WriteLine(weather);
             }
         }
         Dictionary<string, string> GetTokens()
