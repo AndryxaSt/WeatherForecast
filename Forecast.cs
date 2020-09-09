@@ -22,13 +22,13 @@ namespace WeatherForecast
         IList<WeatherClass>[] darkSkys, accuWeathers;
 
         Dictionary<string, string> tokens;
-        public Forecast(string location = "51.381764,33.460309")
+        public Forecast(string location = "47.8229, 35.1903")
         {
             tokens = GetTokens();
             openWeather = new OpenWeather(tokens["OpenWeather"], location);
             darkSky = new DarkSky(tokens["DarkSky"], location);
             weatherBit = new WeatherBit(tokens["WeatherBit"], location);
-            accuWeather = new AccuWeather(tokens["AccuWeather"], "325693");//TODO: Исправить получение погоды по координатам (https://www.accuweather.com/ru/search-locations?query=54.9924%2C+73.3686)
+            accuWeather = new AccuWeather(tokens["AccuWeather"], new Coordinats(Convert.ToDouble(location.Split(',')[0]), Convert.ToDouble(location.Split(',')[1])));//TODO: Исправить получение погоды по координатам (https://www.accuweather.com/ru/search-locations?query=54.9924%2C+73.3686)
             this.location = location;
         }
 

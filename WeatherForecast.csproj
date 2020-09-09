@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Coordinats.cs" />
     <Compile Include="InputForecast\AbstractInputWeather.cs" />
     <Compile Include="InputForecast\AccuWeather.cs" />
     <Compile Include="InputForecast\DarkSky.cs" />
