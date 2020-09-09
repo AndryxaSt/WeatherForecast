@@ -10,11 +10,12 @@ using Newtonsoft.Json;
 namespace WeatherForecast
 {
     class AccuWeather : InputForecast.AbstractInputWeather
+    {
+        int cityCode;
 
-    {   
-        public AccuWeather(string token, string location) : base(token, location)
+        public AccuWeather(string token, Coordinats coordinats) : base(token)
         {
-
+            cityCode = ConvertCoordinatsToCityCode(coordinats);
         }
 
         #region JsonClasses
@@ -43,8 +44,8 @@ namespace WeatherForecast
 
         public class Moon
         {
-            public DateTime Rise { get; set; }
-            public int EpochRise { get; set; }
+            public DateTime? Rise { get; set; }
+            public int? EpochRise { get; set; }
             public DateTime Set { get; set; }
             public int EpochSet { get; set; }
             public string Phase { get; set; }
@@ -159,8 +160,6 @@ namespace WeatherForecast
             public int Icon { get; set; }
             public string IconPhrase { get; set; }
             public bool HasPrecipitation { get; set; }
-            public string PrecipitationType { get; set; }
-            public string PrecipitationIntensity { get; set; }
             public string ShortPhrase { get; set; }
             public string LongPhrase { get; set; }
             public int PrecipitationProbability { get; set; }
@@ -251,7 +250,7 @@ namespace WeatherForecast
             public Minimum min { get; set; }
             public Maximum max { get; set; }
         }
-        
+
 
         public class WetBulbTemperature
         {
@@ -267,56 +266,56 @@ namespace WeatherForecast
             public int UnitType { get; set; }
         }
 
-        
-    public class Visibility
-    {
-        public double Value { get; set; }
-        public string Unit { get; set; }
-        public int UnitType { get; set; }
-    }
 
-    public class Ceiling
-    {
-        public double Value { get; set; }
-        public string Unit { get; set; }
-        public int UnitType { get; set; }
-    }
+        public class Visibility
+        {
+            public double Value { get; set; }
+            public string Unit { get; set; }
+            public int UnitType { get; set; }
+        }
 
-    public class Hourly
-    {
-        public DateTime DateTime { get; set; }
-        public int EpochDateTime { get; set; }
-        public int WeatherIcon { get; set; }
-        public string IconPhrase { get; set; }
-        public bool HasPrecipitation { get; set; }
-        public bool IsDaylight { get; set; }
-        public Temperature Temperature { get; set; }
-        public RealFeelTemperature RealFeelTemperature { get; set; }
-        public WetBulbTemperature WetBulbTemperature { get; set; }
-        public DewPoint DewPoint { get; set; }
-        public Wind Wind { get; set; }
-        public WindGust WindGust { get; set; }
-        public int RelativeHumidity { get; set; }
-        public int IndoorRelativeHumidity { get; set; }
-        public Visibility Visibility { get; set; }
-        public Ceiling Ceiling { get; set; }
-        public int UVIndex { get; set; }
-        public string UVIndexText { get; set; }
-        public int PrecipitationProbability { get; set; }
-        public int RainProbability { get; set; }
-        public int SnowProbability { get; set; }
-        public int IceProbability { get; set; }
-        public TotalLiquid TotalLiquid { get; set; }
-        public Rain Rain { get; set; }
-        public Snow Snow { get; set; }
-        public Ice Ice { get; set; }
-        public int CloudCover { get; set; }
-        public string MobileLink { get; set; }
-        public string Link { get; set; }
-    }
-    #endregion
+        public class Ceiling
+        {
+            public double Value { get; set; }
+            public string Unit { get; set; }
+            public int UnitType { get; set; }
+        }
 
-    public IList<WeatherClass>[] GetWeather()
+        public class Hourly
+        {
+            public DateTime DateTime { get; set; }
+            public int EpochDateTime { get; set; }
+            public int WeatherIcon { get; set; }
+            public string IconPhrase { get; set; }
+            public bool HasPrecipitation { get; set; }
+            public bool IsDaylight { get; set; }
+            public Temperature Temperature { get; set; }
+            public RealFeelTemperature RealFeelTemperature { get; set; }
+            public WetBulbTemperature WetBulbTemperature { get; set; }
+            public DewPoint DewPoint { get; set; }
+            public Wind Wind { get; set; }
+            public WindGust WindGust { get; set; }
+            public int RelativeHumidity { get; set; }
+            public int IndoorRelativeHumidity { get; set; }
+            public Visibility Visibility { get; set; }
+            public Ceiling Ceiling { get; set; }
+            public int UVIndex { get; set; }
+            public string UVIndexText { get; set; }
+            public int PrecipitationProbability { get; set; }
+            public int RainProbability { get; set; }
+            public int SnowProbability { get; set; }
+            public int IceProbability { get; set; }
+            public TotalLiquid TotalLiquid { get; set; }
+            public Rain Rain { get; set; }
+            public Snow Snow { get; set; }
+            public Ice Ice { get; set; }
+            public int CloudCover { get; set; }
+            public string MobileLink { get; set; }
+            public string Link { get; set; }
+        }
+        #endregion
+
+        public IList<WeatherClass>[] GetWeather()
         {
             IList<WeatherClass>[] fullWeather = new List<WeatherClass>[2];
 
@@ -328,7 +327,7 @@ namespace WeatherForecast
 
         private IList<Hourly> GetWeatherHourly()
         {
-            WebRequest requestBit = WebRequest.Create(@"http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/" + location + "?apikey=" + token + "&language=ru-ru&details=true&metric=true");
+            WebRequest requestBit = WebRequest.Create(@"http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/" + cityCode + "?apikey=" + token + "&language=ru-ru&details=true&metric=true");
 
             using (WebResponse response = requestBit.GetResponse())
             {
@@ -348,7 +347,7 @@ namespace WeatherForecast
 
         private IList<DailyForecast> GetWeatherDaily()
         {
-            WebRequest requestBit = WebRequest.Create(@"http://dataservice.accuweather.com/forecasts/v1/daily/5day/" + location + "?apikey=" + token + "&language=ru-ru&details=true&metric=true");
+            WebRequest requestBit = WebRequest.Create(@"http://dataservice.accuweather.com/forecasts/v1/daily/5day/" + cityCode + "?apikey=" + token + "&language=ru-ru&details=true&metric=true");
             using (WebResponse response = requestBit.GetResponse())
             {
                 using (Stream stream = response.GetResponseStream())
@@ -357,7 +356,7 @@ namespace WeatherForecast
                     {
                         string input = reader.ReadToEnd();
 
-                        var temp = JsonConvert.DeserializeObject<Daily>(input);
+                        var temp = JsonConvert.DeserializeObject<Daily>(input);//TODO:Найти ошибку в JSON классе, предположительно class Day
                         IList<DailyForecast> daily = temp.DailyForecasts;
                         return daily;
                     }
@@ -421,95 +420,115 @@ namespace WeatherForecast
 
         }
 
-        int ChangeCode(int inputCode)
-        {
+        private int ConvertCoordinatsToCityCode(Coordinats coordinats)
+        { 
+            WebRequest requestBit = WebRequest.Create($@"http://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey={token}&q={coordinats.lat}%2C%20{coordinats.lon}&language=ru-ru&details=true");
 
-            switch (inputCode)
+            using (WebResponse response = requestBit.GetResponse())
             {
-                case 1:
-                    return 800;
-                case 2:
-                    return 800;
-                case 3:
-                    return 801;
-                case 4:
-                    return 801;
-                case 5:
-                    return 801;
-                case 6:
-                    return 802;
-                case 7:
-                    return 803;
-                case 8:
-                    return 804;
-                case 11:
-                    return 741;
-                case 12:
-                    return 502;
-                case 13:
-                    return 501;
-                case 14:
-                    return 501;
-                case 15:
-                    return 201;
-                case 16:
-                    return 202;
-                case 17:
-                    return 200;
-                case 18:
-                    return 501;
-                case 19:
-                    return 623;
-                case 20:
-                    return 623;
-                case 21:
-                    return 623;
-                case 22:
-                    return 621;
-                case 23:
-                    return 601;
-                case 24:
-                    return 601;
-                case 25:
-                    return 611;
-                case 26:
-                    return 511;
-                case 29:
-                    return 610;
-                case 30:
-                    return 1;
-                case 31:
-                    return 1;
-                case 32:
-                    return 700;
-                case 33:
-                    return 800;
-                case 34:
-                    return 800;
-                case 35:
-                    return 801;
-                case 36:
-                    return 801;
-                case 37:
-                    return 801;
-                case 38:
-                    return 803;
-                case 39:
-                    return 502;
-                case 40:
-                    return 501;
-                case 41:
-                    return 201;
-                case 42:
-                    return 202;
-                case 43:
-                    return 623;
-                case 44:
-                    return 601;
+                using (Stream stream = response.GetResponseStream())
+                {
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        string stringCode = reader.ReadToEnd().Split(',')[1].Split(':')[1];
 
-                default:
-                    return 1;
+                        return Convert.ToInt32(stringCode.Remove(0, 1).Remove(stringCode.Length - 2, 1));
+
+                    }
+                }
             }
-        }// This method changes the weather code to a common code.
+
+        }
+
+        int ChangeCode(int inputCode)
+{
+
+    switch (inputCode)
+    {
+        case 1:
+            return 800;
+        case 2:
+            return 800;
+        case 3:
+            return 801;
+        case 4:
+            return 801;
+        case 5:
+            return 801;
+        case 6:
+            return 802;
+        case 7:
+            return 803;
+        case 8:
+            return 804;
+        case 11:
+            return 741;
+        case 12:
+            return 502;
+        case 13:
+            return 501;
+        case 14:
+            return 501;
+        case 15:
+            return 201;
+        case 16:
+            return 202;
+        case 17:
+            return 200;
+        case 18:
+            return 501;
+        case 19:
+            return 623;
+        case 20:
+            return 623;
+        case 21:
+            return 623;
+        case 22:
+            return 621;
+        case 23:
+            return 601;
+        case 24:
+            return 601;
+        case 25:
+            return 611;
+        case 26:
+            return 511;
+        case 29:
+            return 610;
+        case 30:
+            return 1;
+        case 31:
+            return 1;
+        case 32:
+            return 700;
+        case 33:
+            return 800;
+        case 34:
+            return 800;
+        case 35:
+            return 801;
+        case 36:
+            return 801;
+        case 37:
+            return 801;
+        case 38:
+            return 803;
+        case 39:
+            return 502;
+        case 40:
+            return 501;
+        case 41:
+            return 201;
+        case 42:
+            return 202;
+        case 43:
+            return 623;
+        case 44:
+            return 601;
+
+        default:
+            return 1;
+    }
+}// This method changes the weather code to a common code.
     }
 }
