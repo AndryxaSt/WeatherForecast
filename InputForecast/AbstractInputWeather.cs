@@ -16,6 +16,10 @@ namespace WeatherForecast.InputForecast
             this.token = token;
             this.location = location;
         }
+        public AbstractInputWeather(string token)
+        {
+            this.token = token;
+        }
 
         protected IList<WeatherClass> hourly { get;  set; }
         protected IList<WeatherClass> threeHourly { get;  set; }
