@@ -147,7 +147,7 @@ namespace WeatherForecast
             public int offset { get; set; }
         }
         #endregion
-        public DarkSky(string token, string location) : base(token, location)
+        public DarkSky(string token, string location, Coordinates coordinates) : base(token, location, coordinates)
         {
 
         }
@@ -156,7 +156,7 @@ namespace WeatherForecast
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            WebRequest requestBit = WebRequest.Create(@"https://api.darksky.net/forecast/" + token + "/" + location + "?units=si&lang=ru&extend=hourly");
+            WebRequest requestBit = WebRequest.Create($@"https://api.darksky.net/forecast/{token}/" + coordinates.Latitude + "," + coordinates.Longitude +"?units=si&lang=ru&extend=hourly");
             using (WebResponse response = requestBit.GetResponse())
             {
                 using (Stream stream = response.GetResponseStream())
@@ -183,7 +183,6 @@ namespace WeatherForecast
             daily = GetDaily(weather);
             return new IList<WeatherClass>[3] { hourly, threeHourly, daily };
         }
-
 
         private IList<WeatherClass> GetHourly(RootObject weather)
         {

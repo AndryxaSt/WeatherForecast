@@ -50,12 +50,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Coordinats.cs" />
-    <Compile Include="InputForecast\AbstractInputWeather.cs" />
+    <Compile Include="Coordinates.cs" />
+    <Compile Include="AbstractInputWeather.cs" />
     <Compile Include="InputForecast\AccuWeather.cs" />
     <Compile Include="InputForecast\DarkSky.cs" />
     <Compile Include="Forecast.cs" />
-    <Compile Include="InputForecast\WeatherClass.cs" />
+    <Compile Include="WeatherClass.cs" />
     <Compile Include="InputForecast\OpenWeather.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InputForecast\WeatherBit.cs" />

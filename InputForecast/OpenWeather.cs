@@ -11,8 +11,7 @@ namespace WeatherForecast
 
     class OpenWeather : InputForecast.AbstractInputWeather
     {
-
-        public OpenWeather(string token, string location) : base(token, location)
+        public OpenWeather(string token, string location,Coordinates coordinates) : base(token, location,coordinates)
         {
         }
 
@@ -105,10 +104,10 @@ namespace WeatherForecast
         public async Task<IList<WeatherClass>> GetWeatherAsync()
         {
             OpenWeatherMapClient client = new OpenWeatherMapClient(token);
-            var currentWeather = await client.Forecast.GetByCoordinates(new Coordinates() { Longitude = Convert.ToDouble(location.Split(',')[0].Replace(',', '.')), Latitude = Convert.ToDouble(location.Split(',')[1].Replace(',', '.')) },
+            var currentWeather = await client.Forecast.GetByCoordinates(new OpenWeatherMap.Coordinates() {Latitude =coordinates.Latitude, Longitude = coordinates.Longitude },
                                                                         false,
                                                                         MetricSystem.Metric,
-                                                                        OpenWeatherMapLanguage.RU);
+                                                                        OpenWeatherMapLanguage.RU) ;
 
             return ConvertToWeatherClass(currentWeather.Forecast);
 

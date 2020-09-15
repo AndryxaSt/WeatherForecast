@@ -12,7 +12,7 @@ namespace WeatherForecast
     class WeatherBit : InputForecast.AbstractInputWeather//https://www.weatherbit.io
     {
 
-        public WeatherBit(string token, string location) : base(token, location)
+        public WeatherBit(string token, string location,Coordinates coordinates) : base(token, location,coordinates)
         {
 
         }
@@ -81,7 +81,7 @@ namespace WeatherForecast
 
         private RootObject GetWeatherFromServer()
         {
-            WebRequest requestBit = WebRequest.Create(@"https://api.weatherbit.io/v2.0/forecast/daily?lat=" + location.Split(',')[0] + "&lon=" + location.Split(',')[1] + "&days=6&units=M&lang=ru&key=" + token);
+            WebRequest requestBit = WebRequest.Create($@"https://api.weatherbit.io/v2.0/forecast/daily?lat={coordinates.Latitude}&lon={coordinates.Longitude}&days=6&units=M&lang=ru&key=" + token);
             
             using (WebResponse response = requestBit.GetResponse())
             {

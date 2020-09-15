@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Net;
 using Newtonsoft.Json;
@@ -13,9 +10,9 @@ namespace WeatherForecast
     {
         int cityCode;
 
-        public AccuWeather(string token, Coordinats coordinats) : base(token)
+        public AccuWeather(string token,string location, Coordinates coordinates) : base(token,location,coordinates)
         {
-            cityCode = ConvertCoordinatsToCityCode(coordinats);
+            cityCode = ConvertCoordinatsToCityCode();
         }
 
         #region JsonClasses
@@ -325,6 +322,26 @@ namespace WeatherForecast
             return fullWeather;
         }
 
+        private int ConvertCoordinatsToCityCode()
+        {
+            WebRequest requestBit = WebRequest.Create($@"http://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey={token}&q={coordinates.Latitude}%2C%20{coordinates.Longitude}&language=ru-ru&details=true");
+            
+            using (WebResponse response = requestBit.GetResponse())
+            {
+                using (Stream stream = response.GetResponseStream())
+                {
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        string stringCode = reader.ReadToEnd().Split(',')[1].Split(':')[1];
+
+                        return Convert.ToInt32(stringCode.Remove(0, 1).Remove(stringCode.Length - 2, 1));
+
+                    }
+                }
+            }
+
+        }
+
         private IList<Hourly> GetWeatherHourly()
         {
             WebRequest requestBit = WebRequest.Create(@"http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/" + cityCode + "?apikey=" + token + "&language=ru-ru&details=true&metric=true");
@@ -417,26 +434,6 @@ namespace WeatherForecast
             return daily;
 
 
-
-        }
-
-        private int ConvertCoordinatsToCityCode(Coordinats coordinats)
-        {
-            WebRequest requestBit = WebRequest.Create($@"http://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey={token}&q={coordinats.lat}%2C%20{coordinats.lon}&language=ru-ru&details=true");
-
-            using (WebResponse response = requestBit.GetResponse())
-            {
-                using (Stream stream = response.GetResponseStream())
-                {
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        string stringCode = reader.ReadToEnd().Split(',')[1].Split(':')[1];
-
-                        return Convert.ToInt32(stringCode.Remove(0, 1).Remove(stringCode.Length - 2, 1));
-
-                    }
-                }
-            }
 
         }
 
