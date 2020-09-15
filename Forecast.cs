@@ -7,7 +7,7 @@ using System.IO;
 
 namespace WeatherForecast
 {
-
+    
     public class Forecast
     {
         DarkSky darkSky;//1,3hourly, daily
@@ -17,54 +17,58 @@ namespace WeatherForecast
 
         DateTime timeNow;
         string location;
+        Coordinates coordinates;
 
         IList<WeatherClass> weatherBits, openWeathers;
         IList<WeatherClass>[] darkSkys, accuWeathers;
 
         Dictionary<string, string> tokens;
-        public Forecast(string location = "47.8229, 35.1903")
-        {
-            tokens = GetTokens();
-            openWeather = new OpenWeather(tokens["OpenWeather"], location);
-            darkSky = new DarkSky(tokens["DarkSky"], location);
-            weatherBit = new WeatherBit(tokens["WeatherBit"], location);
-            accuWeather = new AccuWeather(tokens["AccuWeather"], new Coordinats(Convert.ToDouble(location.Split(',')[0]), Convert.ToDouble(location.Split(',')[1])));//TODO: Исправить получение погоды по координатам (https://www.accuweather.com/ru/search-locations?query=54.9924%2C+73.3686)
-            this.location = location;
-        }
 
+        public Forecast(string location = "49.9808, 36.2527")
+        {
+            this.location = location;
+            coordinates = new Coordinates(location);
+            tokens = GetTokens();
+            openWeather = new OpenWeather(tokens["OpenWeather"], location, coordinates);
+            darkSky = new DarkSky(tokens["DarkSky"], location, coordinates);
+            weatherBit = new WeatherBit(tokens["WeatherBit"], location, coordinates);
+            accuWeather = new AccuWeather(tokens["AccuWeather"], location, coordinates);
+
+        }
 
         void GetWeather()
 
         {
             timeNow = DateTime.Now;
+            try
+            {
+                if (weatherBits == null || weatherBits[0].Date.Day < timeNow.Day)
+                {
+                    weatherBits = weatherBit.GetWeather();
+                }
+                if (openWeathers == null || openWeathers[0].Date.Day < timeNow.Day)
+                {
+                    openWeathers = openWeather.GetWeatherAsync().Result;
+                }
+                if (darkSkys == null || darkSkys[0][0].Date.Day < timeNow.Day)
+                {
+                    darkSkys = darkSky.GetWeather();
+                }
+                if (accuWeathers == null || accuWeathers[0][0].Date.Day < timeNow.Day)
+                {
+                    accuWeathers = accuWeather.GetWeather();
+                }
+            }
 
-            if (weatherBits == null || weatherBits[0].Date.Day < timeNow.Day)
+            catch (Exception ex)
             {
-                weatherBits = weatherBit.GetWeather();
-            }
-            if (openWeathers == null || openWeathers[0].Date.Day < timeNow.Day)
-            {
-                openWeathers = openWeather.GetWeatherAsync().Result;
-            }
-            if (darkSkys == null || darkSkys[0][0].Date.Day < timeNow.Day)
-            {
-                darkSkys = darkSky.GetWeather();
-            }
-            if (accuWeathers == null || accuWeathers[0][0].Date.Day < timeNow.Day)
-            {
-                accuWeathers = accuWeather.GetWeather();
+                Console.WriteLine(ex);
             }
 
         }
-
-        public void Test()
-        {
-            GetThreeHourlyForecast();
-        }
-        public void GetDailyForecast()
+        public IEnumerable<WeatherClass> GetDailyForecast() 
         {
             GetWeather();
-
             var midDailyWeather = from d in darkSkys[2]
                                   from w in weatherBits
                                   from a in accuWeathers[1]
@@ -86,13 +90,12 @@ namespace WeatherForecast
 
                                   };
 
-            Display(midDailyWeather);
+            return midDailyWeather;
 
         }
-        public void GetThreeHourlyForecast()
+        public IEnumerable<WeatherClass> GetThreeHourlyForecast()
         {
             GetWeather();
-
             var midThreeHourlyWeather = from d in darkSkys[1]
                                         from o in openWeathers
                                         where d.Date == o.Date
@@ -113,10 +116,10 @@ namespace WeatherForecast
 
                                         };
 
-            Display(midThreeHourlyWeather);
+            return midThreeHourlyWeather;
 
         }
-        public void GetHourlyForecast()
+        public IEnumerable<WeatherClass> GetHourlyForecast()
         {
             GetWeather();
             var midHourlyWeather = from a in accuWeathers[0]
@@ -138,10 +141,8 @@ namespace WeatherForecast
                                        icon = "A",//Заглушка
                                    };
 
-            Display(midHourlyWeather);
+            return midHourlyWeather;
         }
-
-
 
         string ConvertBearingToDirection(double inputBearing)
         {
@@ -220,13 +221,7 @@ namespace WeatherForecast
             return string.Empty;
 
         }
-        void Display(IEnumerable<WeatherClass> forecast)
-        {
-            foreach (WeatherClass weather in forecast)
-            {
-                Console.WriteLine(weather);
-            }
-        }
+
         Dictionary<string, string> GetTokens()
         {
             string[] tokenFile = File.ReadAllLines(@"Tokens.txt");
@@ -240,6 +235,7 @@ namespace WeatherForecast
 
             return tokens;
         }
+
         int WeatherCodeComparison(int[] codes)
         {
 
