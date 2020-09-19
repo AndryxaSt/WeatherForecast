@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace WeatherForecast
@@ -12,7 +13,7 @@ namespace WeatherForecast
     class WeatherBit : InputForecast.AbstractInputWeather//https://www.weatherbit.io
     {
 
-        public WeatherBit(string token, string location,Coordinates coordinates) : base(token, location,coordinates)
+        public WeatherBit(string token, string location, Coordinates coordinates) : base(token, location, coordinates)
         {
 
         }
@@ -77,12 +78,12 @@ namespace WeatherForecast
         }
         #endregion
 
-        
+
 
         private RootObject GetWeatherFromServer()
         {
             WebRequest requestBit = WebRequest.Create($@"https://api.weatherbit.io/v2.0/forecast/daily?lat={coordinates.Latitude}&lon={coordinates.Longitude}&days=6&units=M&lang=ru&key=" + token);
-            
+
             using (WebResponse response = requestBit.GetResponse())
             {
                 using (Stream stream = response.GetResponseStream())
@@ -93,6 +94,7 @@ namespace WeatherForecast
 
                         RootObject rootObject = JsonConvert.DeserializeObject<RootObject>(input);
 
+                        
                         return rootObject;
                     }
                 }
@@ -103,6 +105,12 @@ namespace WeatherForecast
         {
             daily = ConvertToWeatherClass(GetWeatherFromServer());
 
+            return daily;
+        }
+        public async Task<IList<WeatherClass>> GetWeatherAsync()
+        {
+            daily = await Task.Run(() => ConvertToWeatherClass(GetWeatherFromServer()));
+           
             return daily;
         }
 

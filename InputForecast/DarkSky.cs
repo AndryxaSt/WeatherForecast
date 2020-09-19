@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using ForecastIO.Extensions;
 using ForecastIO;
@@ -156,7 +157,7 @@ namespace WeatherForecast
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            WebRequest requestBit = WebRequest.Create($@"https://api.darksky.net/forecast/{token}/" + coordinates.Latitude + "," + coordinates.Longitude +"?units=si&lang=ru&extend=hourly");
+            WebRequest requestBit = WebRequest.Create($@"https://api.darksky.net/forecast/{token}/" + coordinates.Latitude + "," + coordinates.Longitude + "?units=si&lang=ru&extend=hourly");
             using (WebResponse response = requestBit.GetResponse())
             {
                 using (Stream stream = response.GetResponseStream())
@@ -167,6 +168,7 @@ namespace WeatherForecast
 
                         RootObject rootObject = JsonConvert.DeserializeObject<RootObject>(input);
 
+                        
                         return rootObject;
                     }
                 }
@@ -181,7 +183,20 @@ namespace WeatherForecast
             hourly = GetHourly(weather);
             threeHourly = GetThreeHourly(weather);
             daily = GetDaily(weather);
+            
             return new IList<WeatherClass>[3] { hourly, threeHourly, daily };
+        }
+
+        public async Task<IList<WeatherClass>[]> GetWeatherAsync()
+        {
+            weather = await Task.Run(()=>GetWeatherFromServer()); 
+
+            hourly = GetHourly(weather);
+            threeHourly = GetThreeHourly(weather);
+            daily = GetDaily(weather);
+            
+            return new IList<WeatherClass>[3] { hourly, threeHourly, daily };
+
         }
 
         private IList<WeatherClass> GetHourly(RootObject weather)

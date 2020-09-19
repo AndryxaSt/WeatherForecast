@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using Newtonsoft.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace WeatherForecast
 {
@@ -10,7 +12,7 @@ namespace WeatherForecast
     {
         int cityCode;
 
-        public AccuWeather(string token,string location, Coordinates coordinates) : base(token,location,coordinates)
+        public AccuWeather(string token, string location, Coordinates coordinates) : base(token, location, coordinates)
         {
             cityCode = ConvertCoordinatsToCityCode();
         }
@@ -321,11 +323,21 @@ namespace WeatherForecast
 
             return fullWeather;
         }
+        public async Task<IList<WeatherClass>[]> GetWeatherAsync()
+        {
+            IList<WeatherClass>[] fullWeather = new List<WeatherClass>[2];
+
+            fullWeather[0] = await Task.Run(() => ConvertHourlyToWeatherClass(GetWeatherHourly()));
+            fullWeather[1] = await Task.Run(() => ConvertDailyToWeatherClass(GetWeatherDaily()));
+
+            
+            return fullWeather;
+        }
 
         private int ConvertCoordinatsToCityCode()
         {
             WebRequest requestBit = WebRequest.Create($@"http://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey={token}&q={coordinates.Latitude}%2C%20{coordinates.Longitude}&language=ru-ru&details=true");
-            
+
             using (WebResponse response = requestBit.GetResponse())
             {
                 using (Stream stream = response.GetResponseStream())
@@ -355,7 +367,7 @@ namespace WeatherForecast
                         string input = reader.ReadToEnd();
 
                         var hourly = JsonConvert.DeserializeObject<List<Hourly>>(input);
-
+                        
                         return hourly;
                     }
                 }
@@ -375,6 +387,7 @@ namespace WeatherForecast
 
                         var temp = JsonConvert.DeserializeObject<Daily>(input);
                         IList<DailyForecast> daily = temp.DailyForecasts;
+                        
                         return daily;
                     }
                 }
